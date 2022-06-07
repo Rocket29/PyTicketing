@@ -1,7 +1,8 @@
 import csv
 import pandas
 
-menuOptions = ["New Ticket", "Current Tickets", "Get Ticket Status", "Exit"]
+menuOptions = ["New Ticket", "Current Tickets", "View Ticket", "Exit"]
+ticketMenuOptions = ["Update Ticket", "Close Ticket", "Return to Main Menu"]
 currentTickets = []
 ticketNumbers = []
 print("Welcome to PyTicketing!\n")
@@ -30,6 +31,15 @@ def getTicketStatus(number):
         if int(ticketSheet.Number[i]) == int(number):
             print("Ticket status: " + str(ticketSheet.Status[i]) + "\n")
 
+# Print a ticket function
+def printTicket(number):
+    for i in range(len(ticketSheet.Number)):
+        if int(ticketSheet.Number[i]) == int(number):
+            print("Ticket number: " + str(ticketSheet.Number[i]))
+            print("Ticket discription: " + str(ticketSheet.Discription[i]))
+            print("Ticket status: " + str(ticketSheet.Status[i]))
+            print("Ticket entered by: " + str(ticketSheet.EnteredBy[i]) + "\n")
+
 # Set ticket status function
 # Indexing is done on a 0 start posistion, however ticket numbers have a 1 start position
 def setTicketStatus(number, status):
@@ -57,6 +67,8 @@ def closeTicket(number):
             ticketSheet.to_csv('tickets.csv', index=False)
             print("Ticket number " + str(number) + " status updated to: Closed\n")
 
+
+# Main application loop
 while True:
     for i in range(len(menuOptions)):
         print(str(i + 1) + ".) " + str(menuOptions[i]))
@@ -81,23 +93,27 @@ while True:
         print(ticketSheet)
         print('\n') # Spacer
 
-    #Get ticket status 
-    elif userChoice == "get ticket status" or userChoice == str(3):
-        getTicStatusNum = input("Enter the ticket number: ")
-        getTicketStatus(getTicStatusNum)
-
-    # Set ticket status
-    elif userChoice == "set ticket status" or userChoice == str(4):
-        setTicStatusNum = input("Enter the ticket number: ")
-        setTicStatus = input("Enter the ticket status: ")
-        setTicketStatus(setTicStatusNum, setTicStatus)
-    
-    # Update ticket discription
-    elif userChoice == "update ticket discription" or userChoice == str(5):
-        updateTicNum = input("Enter the ticket number: ")
-        updateTicket(updateTicNum)
-    
-    # Close ticket
-    elif userChoice == "close ticket" or userChoice == str(6):
-        closeTicNum = input("Enter the ticket number: ")
-        closeTicket(closeTicNum)
+    # View ticket and ticket sub menu
+    elif userChoice == "View ticket" or userChoice == str(3):
+        while True:
+            viewTicketNumber = int(input("Enter ticket number: "))
+            printTicket(viewTicketNumber)
+            for i in range(len(ticketMenuOptions)):
+                print(str(i + 1) + ".) " + str(ticketMenuOptions[i]))
+            exitOption = len(ticketMenuOptions)
+            subUserChoice = input().lower()
+            print("Made it to sub menu choices")
+            # Back to main menu
+            if subUserChoice == "Return to Main Menu" or userChoice == str(exitOption):
+                break
+            # Update ticket discription
+            elif subUserChoice == "update ticket discription" or userChoice == str(1):
+                updateTicket(viewTicketNumber)
+                setTicketStatus(viewTicketNumber, 'Open')
+            # Close ticket
+            elif subUserChoice == "close ticket" or userChoice == str(2):
+                print('Are you sure? (Y/N)')
+                closeTicUserChoice = input()
+                if userChoice == 'Y':
+                    closeTicket(viewTicketNumber)
+        
